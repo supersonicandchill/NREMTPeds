@@ -1,417 +1,740 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
-<title>Away Game — Christian Parent’s Playbook</title>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<title>Pediatric EMT-B Sprint Trainer</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #f8f9fa; font-family: 'DM Sans', system-ui, sans-serif; color: #1a1a1a; line-height: 1.6; }
-button { cursor: pointer; }
-.progress-bar { height: 10px; background: #e9ecef; border-radius: 9999px; overflow: hidden; }
-.progress-fill { height: 100%; transition: width 0.5s ease; }
-.team-card { background: #fff; border: 1px solid #dee2e6; border-radius: 16px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
-.delete-btn { background: #fee2e2; color: #ef4444; border: none; width: 32px; height: 32px; border-radius: 8px; font-size: 18px; }
+    *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    body{ margin:0; font-family:Arial, Helvetica, sans-serif; background:#101418; color:#f5f5f5; line-height:1.4; }
+    header{ padding:20px; text-align:center; background:#151c22; border-bottom:2px solid #222; position:sticky; top:0; z-index:100; }
+    h1{ margin:0; font-size:1.8rem; }
+    .sub{ opacity:0.8; margin-top:6px; font-size:0.95rem; }
+    .controls{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:15px; }
+    button{ border:none; border-radius:10px; padding:12px 16px; background:#2b7cff; color:white; font-size:1rem; font-weight:bold; cursor:pointer; transition:0.2s; }
+    button:active{ transform:scale(0.98); }
+    button:hover{ background:#1e5cb8; }
+    button.secondary{ background:#444; }
+    button.secondary:hover{ background:#555; }
+    button.danger{ background:#b32c2c; }
+    button.danger:hover{ background:#8b2020; }
+    main{ padding:16px; max-width:900px; margin:auto; }
+    .card{ background:#171f27; border-radius:16px; padding:18px; margin-bottom:18px; border:1px solid #2b3540; box-shadow:0 4px 12px rgba(0,0,0,0.25); }
+    .category{ font-size:0.85rem; opacity:0.7; margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; }
+    .question{ font-size:1.15rem; font-weight:bold; margin-bottom:16px; }
+    .answers{ display:flex; flex-direction:column; gap:10px; }
+    .answer{ background:#253240; border:2px solid transparent; border-radius:12px; padding:14px; cursor:pointer; transition:0.2s; }
+    .answer:hover{ border-color:#2b7cff; }
+    .answer.correct{ border-color:#00d26a; background:#123a23; }
+    .answer.wrong{ border-color:#ff4b4b; background:#451919; }
+    .answer.disabled{ pointer-events:none; opacity:0.9; }
+    .explanation{ margin-top:16px; padding:14px; border-radius:12px; background:#12181e; display:none; scroll-margin-top:80px; }
+    .memory{ margin-top:10px; padding:10px; border-left:4px solid #2b7cff; background:#111923; font-size:0.95rem; }
+    .stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:20px; }
+    .stat{ background:#171f27; border-radius:14px; padding:16px; text-align:center; border:1px solid #2b3540; }
+    .stat-number{ font-size:1.5rem; font-weight:bold; color:#2b7cff; }
+    .flashcard{ min-height:240px; display:flex; align-items:center; justify-content:center; text-align:center; padding:25px; font-size:1.3rem; font-weight:bold; cursor:pointer; user-select:none; }
+    .flash-back{ display:none; font-size:1.1rem; font-weight:normal; }
+    .scenario-box{ background:#12181e; padding:16px; border-radius:12px; margin-top:12px; margin-bottom:12px; }
+    .scenario-answer{ background:#1a2634; padding:16px; border-radius:12px; margin-top:12px; border-left:4px solid #00d26a; }
+    .hidden{ display:none; }
+    .tip{ background:#1a2634; padding:14px; border-radius:10px; border-left:4px solid #2b7cff; }
+    .tip strong{ color:#2b7cff; }
+    .cram-grid{ display:grid; gap:12px; }
+    .nav-buttons{ display:flex; gap:10px; flex-wrap:wrap; margin-top:20px; position:relative; z-index:10; }
+    .nav-buttons button{ font-size:0.95rem; padding:10px 14px; }
+    .progress-bar{ width:100%; height:8px; background:#253240; border-radius:4px; margin:10px 0 0 0; overflow:hidden; }
+    .progress-fill{ height:100%; background:#2b7cff; transition:width 0.3s; }
+    h2{ margin-top:0; color:#2b7cff; }
+    h3{ color:#2b7cff; margin-top:16px; margin-bottom:8px; }
+    .table-sim{ width:100%; border-collapse:collapse; margin:12px 0; font-size:0.95rem; }
+    .table-sim th{ background:#1a2634; padding:10px; text-align:left; border-bottom:2px solid #2b3540; }
+    .table-sim td{ padding:10px; border-bottom:1px solid #2b3540; }
+    .drug-card{ background:#1a2634; padding:12px; border-radius:8px; margin:8px 0; border-left:4px solid #ff9800; }
+    .drug-card strong{ color:#ff9800; }
+    .age-group{ background:#1a2634; padding:12px; border-radius:8px; margin:8px 0; border-left:4px solid #9c27b0; }
+    .age-group strong{ color:#9c27b0; }
+    @media(max-width:700px){ .stats{ grid-template-columns:1fr; } .question{ font-size:1rem; } .nav-buttons{ flex-direction:column; } button{ width:100%; } }
 </style>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel" data-presets="react">
-const { useState } = React;
 
-// ─── STORAGE ──────────────────────────────────────────────────────────────────
-function load(key, fb) { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fb; } catch { return fb; } }
-function save(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
-let _c = Date.now();
-function uid() { return "x" + (++_c).toString(36); }
-
-// ─── COLORS ───────────────────────────────────────────────────────────────────
-const C = {
-  bg0: "#f8f9fa", bg1: "#ffffff", bg2: "#f1f3f5", bg3: "#e9ecef",
-  border: "#dee2e6", borderHi: "#ff8c00",
-  text: "#1a1a1a", textSub: "#495057", textMuted: "#6c757d",
-  orange: "#ff8c00", green: "#00b36b"
-};
-
-// ─── VIRTUES (Complete) ───────────────────────────────────────────────────────
-const VIRTUES = {
-  L: { key:"L", label:"Love", icon:"❤️", tagline:"Others-first in a me-first culture", color:"#ff4d4d", bg:"#fff0f0", border:"#ff8c00",
-       scoreMeaning: "0=Never • 1=Rarely • 2=Sometimes • 3=Consistently puts others first",
-       strong: ["Celebrates teammates' success", "Shows genuine kindness", "Puts team above self"],
-       weak:   ["Selfish on and off the field", "Dismisses or ignores teammates", "Only cheers for own highlights"],
-       develop: ["After each game, name one teammate who helped you win", "Do one act of encouragement before you leave the field", "Pray: 'Lord, help me love my teammates the way You love me'"] },
-  P: { key:"P", label:"Peace", icon:"☮️", tagline:"Calm anchored in Christ", color:"#00b36b", bg:"#f0fff4", border:"#ff8c00",
-       scoreMeaning: "0=Constant anxiety • 1=Occasional calm • 2=Usually calm • 3=Peace that guards the heart",
-       strong: ["Stays composed under pressure", "Calms teammates in tense moments", "Bounces back quickly from mistakes"],
-       weak:   ["Anxious or panicked when things go wrong", "Spreads tension to teammates", "Dwells on errors during play"],
-       develop: ["Practice three slow breaths before any big moment", "Write down one worry this week and give it to God in prayer", "Memorize Phil. 4:7 — let it anchor your pregame routine"] },
-  S: { key:"S", label:"Self-Control", icon:"🛡️", tagline:"Responding instead of reacting", color:"#0077cc", bg:"#f0f8ff", border:"#ff8c00",
-       scoreMeaning: "0=Frequent outbursts • 1=Improving • 2=Usually controlled • 3=Strong self-discipline",
-       strong: ["Responds to bad calls without blowing up", "Keeps emotions in check under provocation", "Leads by example in discipline"],
-       weak:   ["Frequent outbursts or meltdowns", "Argues with officials or coaches", "Lets frustration hurt performance"],
-       develop: ["Identify your #1 trigger — name it, then make a plan for it", "After a bad call, count to 5 before you react", "Ask a trusted teammate to hold you accountable this week"] },
-  G: { key:"G", label:"Gentleness", icon:"🌿", tagline:"Strength under control", color:"#9c4dff", bg:"#f8f0ff", border:"#ff8c00",
-       scoreMeaning: "0=Often harsh • 1=Sometimes gentle • 2=Usually gentle • 3=Strength under control",
-       strong: ["Encourages struggling teammates", "Competes hard without being cruel", "Uses words that build up, not tear down"],
-       weak:   ["Often harsh or cutting with words", "Intimidates or belittles others", "Confuses meanness with toughness"],
-       develop: ["Before criticizing a teammate, ask: 'Is this kind AND true?'", "Find one struggling player this week and intentionally encourage them", "Journal: where did strength AND gentleness show up together today?"] },
-  H: { key:"H", label:"Humility", icon:"🙏", tagline:"Playing from identity, not for identity", color:"#ff8c00", bg:"#fff8f0", border:"#ff8c00",
-       scoreMeaning: "0=Very prideful • 1=Occasional humility • 2=Growing humility • 3=Consistently humble",
-       strong: ["Credits teammates and coaches for success", "Accepts coaching without defensiveness", "Secure enough to celebrate others"],
-       weak:   ["Takes credit, deflects blame", "Gets defensive when corrected", "Needs to be the star"],
-       develop: ["After your next win, publicly credit two specific teammates", "When corrected by a coach, respond: 'Thank you, I'll work on that'", "Ask yourself: 'Am I playing TO prove something or FROM knowing who I am?'"] },
-  Gr: { key:"Gr", label:"Gratitude", icon:"🙌", tagline:"Thankful in all circumstances", color:"#ffaa00", bg:"#fffdf0", border:"#ff8c00",
-       scoreMeaning: "0=Very entitled • 1=Occasional thanks • 2=Usually grateful • 3=Thankful in all circumstances",
-       strong: ["Thanks coaches, officials, and opponents", "Grateful for the opportunity to compete", "Positive attitude win or lose"],
-       weak:   ["Entitled attitude about playing time or roles", "Rarely thanks others", "Complains about conditions, calls, or teammates"],
-       develop: ["Start every practice with one thing you're grateful for about this team", "Write a one-line thank-you to a coach or teammate this week", "After a loss, find three genuine things to be thankful for before you leave"] },
-  J: { key:"J", label:"Joy", icon:"🎉", tagline:"Delight that outlasts the score", color:"#ff6600", bg:"#fff4f0", border:"#ff8c00",
-       scoreMeaning: "0=Joy is gone • 1=Rare joy • 2=Usually joyful • 3=Consistent delight",
-       strong: ["Genuine enjoyment of the game", "Joy that doesn't depend on the scoreboard", "Lifts the energy of those around them"],
-       weak:   ["Only happy when winning", "Drains team energy with negativity", "Has lost the love of the game"],
-       develop: ["Recall why you first fell in love with this sport — write it down", "Find one moment in each practice to just enjoy the game", "Remind yourself: the scoreboard is temporary, but who you're becoming is not"] }
-};
-
-const SCORE_LABELS = ["Missing", "Emerging", "Developing", "Strong"];
-
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
-function getCombo(scores) {
-  const strong = Object.values(scores).filter(v => v === 3).length;
-  const developing = Object.values(scores).filter(v => v >= 2).length;
-  const avg = (Object.values(scores).reduce((a,b) => a + b, 0) / 7).toFixed(1);
-
-  if (strong >= 5) return { label: "Kingdom Competitor", icon: "🏆", desc: `Avg ${avg}/3`, color: C.orange, progress: 95 };
-  if (developing >= 6) return { label: "Strong Disciple", icon: "🌟", desc: `Avg ${avg}/3`, color: C.green, progress: 85 };
-  return { label: "Developing Disciple", icon: "🌱", desc: `Avg ${avg}/3`, color: "#fd7e14", progress: Math.round(developing / 7 * 100) };
-}
-
-function calculateTeamProgress(athletes) {
-  if (athletes.length === 0) return { avgScore: "0.0", strongPercent: 0, totalAthletes: 0 };
-  let totalScore = 0, totalStrong = 0;
-  const totalVirtues = athletes.length * 7;
-
-  athletes.forEach(a => {
-    const scores = Object.values(a.scores || {});
-    totalScore += scores.reduce((a,b) => a + b, 0);
-    totalStrong += scores.filter(v => v === 3).length;
-  });
-
-  const avgScore = (totalScore / totalVirtues).toFixed(1);
-  const strongPercent = Math.round((totalStrong / totalVirtues) * 100);
-
-  return { avgScore, strongPercent, totalAthletes: athletes.length };
-}
-
-// ─── MODALS ───────────────────────────────────────────────────────────────────
-function Modal({title, onClose, children}) {
-  return (
-    <div style={{position:"fixed", inset:0, background:"rgba(0,0,0,0.75)", zIndex:500, display:"flex", alignItems:"center", justifyContent:"center"}} onClick={e=>e.target===e.currentTarget&&onClose()}>
-      <div style={{background:"#fff", borderRadius:16, width:"92%", maxWidth:720, maxHeight:"92vh", overflow:"hidden", boxShadow:"0 25px 70px rgba(0,0,0,0.25)"}}>
-        <div style={{padding:"18px 24px", borderBottom:"1px solid #dee2e6", display:"flex", justifyContent:"space-between", alignItems:"center"}}>
-          <span style={{fontSize:21, fontWeight:800, color:C.orange}}>{title}</span>
-          <button onClick={onClose} style={{fontSize:24, background:"none", border:"none", color:"#666"}}>✕</button>
-        </div>
-        <div style={{padding:24, overflowY:"auto", maxHeight:"78vh"}}>{children}</div>
-      </div>
+<header>
+    <h1>👶 Pediatric EMT-B Sprint Trainer</h1>
+    <div class="sub">57 Pediatric High-Yield Questions • National Registry Style</div>
+    <div class="controls">
+        <button onclick="showSection('quizSection')">📝 Quiz</button>
+        <button onclick="showSection('flashSection')" class="secondary">🔖 Flashcards</button>
+        <button onclick="showSection('scenarioSection')" class="secondary">🚨 Scenarios</button>
+        <button onclick="showSection('cramSection')" class="secondary">⚡ Cram Sheet</button>
+        <button onclick="showSection('pediSection')" class="secondary">👧 Pedi Dosing</button>
     </div>
-  );
-}
+</header>
 
-function ConfirmDelete({name, onConfirm, onCancel}) {
-  return (
-    <Modal title="Delete Athlete" onClose={onCancel}>
-      <p style={{fontSize:16, marginBottom:24}}>Are you sure you want to permanently delete <strong>{name}</strong>?</p>
-      <p style={{color:"#ef4444", marginBottom:24}}>This cannot be undone.</p>
-      <div style={{display:"flex", gap:12, justifyContent:"flex-end"}}>
-        <button onClick={onCancel} style={{padding:"12px 24px", border:"none", background:"#ddd", borderRadius:10}}>Cancel</button>
-        <button onClick={onConfirm} style={{padding:"12px 28px", border:"none", background:"#ef4444", color:"#fff", borderRadius:10, fontWeight:700}}>Yes, Delete</button>
-      </div>
-    </Modal>
-  );
-}
-
-// ─── EDIT MODAL ───────────────────────────────────────────────────────────────
-function EditModal({person, onSave, onClose}) {
-  const [data, setData] = useState({...person, notes: person.notes || ""});
-
-  const updateScore = (key, value) => setData(prev => ({...prev, scores: {...prev.scores, [key]: Number(value)}}));
-
-  return (
-    <Modal title={data.id ? "Edit Athlete" : "Add New Athlete"} onClose={onClose}>
-      <input placeholder="Athlete Name *" value={data.name||""} onChange={e=>setData({...data,name:e.target.value})} style={{width:"100%", padding:14, fontSize:17, border:`2px solid ${C.border}`, borderRadius:10, marginBottom:12}} />
-      <input placeholder="Role / Team (optional)" value={data.role||""} onChange={e=>setData({...data,role:e.target.value})} style={{width:"100%", padding:14, fontSize:17, border:`2px solid ${C.border}`, borderRadius:10, marginBottom:20}} />
-
-      <div style={{marginBottom:20}}>
-        <div style={{fontWeight:700, color:C.orange, marginBottom:12}}>Score Each Virtue (0–3)</div>
-        {Object.values(VIRTUES).map(t => (
-          <div key={t.key} style={{marginBottom:16, padding:16, background:"#fff", border:`1px solid ${t.border}`, borderRadius:12}}>
-            <div style={{display:"flex", alignItems:"center", gap:12, marginBottom:8}}>
-              <span style={{fontSize:28}}>{t.icon}</span>
-              <div style={{flex:1, fontWeight:700, color:t.color}}>{t.label}</div>
-            </div>
-            <div style={{fontSize:13, color:"#555", marginBottom:10}}>{t.scoreMeaning}</div>
-            <div style={{display:"flex", gap:6}}>
-              {[0,1,2,3].map(n => (
-                <button key={n} onClick={()=>updateScore(t.key,n)} style={{flex:1, padding:"10px", borderRadius:8, background: data.scores[t.key]===n ? C.orange : "#f1f3f5", color: data.scores[t.key]===n ? "#fff" : "#333", fontWeight:700}}>
-                  {n}
-                </button>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div style={{marginBottom:20}}>
-        <div style={{fontWeight:700, marginBottom:8}}>Notes / Observations / Prayers</div>
-        <textarea value={data.notes} onChange={e=>setData({...data, notes:e.target.value})} placeholder="Key moments, growth areas, specific prayers..." style={{width:"100%", height:130, padding:14, border:`2px solid ${C.border}`, borderRadius:10, resize:"vertical"}} />
-      </div>
-
-      <div style={{display:"flex", gap:12, justifyContent:"flex-end"}}>
-        <button onClick={onClose} style={{padding:"12px 24px", border:"none", background:"#ddd", borderRadius:10}}>Cancel</button>
-        <button onClick={()=>onSave(data)} style={{padding:"12px 32px", border:"none", background:C.orange, color:"#fff", borderRadius:10, fontWeight:700}} disabled={!data.name?.trim()}>💾 Save Changes</button>
-      </div>
-    </Modal>
-  );
-}
-
-// ─── PERSON DETAIL ────────────────────────────────────────────────────────────
-function PersonDetail({person, onClose, onEdit}) {
-  const [tab, setTab] = useState("assess");
-  const combo = getCombo(person.scores);
-
-  return (
-    <Modal title={person.name} onClose={onClose}>
-      <div style={{display:"flex", justifyContent:"space-between", marginBottom:20}}>
-        <div>
-          <div style={{fontSize:52}}>{combo.icon}</div>
-          <div style={{fontSize:24, fontWeight:800, color:combo.color}}>{combo.label}</div>
-        </div>
-        <button onClick={()=>{ onEdit(person); onClose(); }} style={{background:C.orange, color:"#fff", border:"none", padding:"10px 22px", borderRadius:10, fontWeight:700}}>✏ Edit</button>
-      </div>
-
-      <div style={{marginBottom:24}}>
-        <div style={{display:"flex", justifyContent:"space-between", fontSize:14, marginBottom:8}}>
-          <span>Character Progress</span>
-          <span>{combo.progress}%</span>
-        </div>
-        <div className="progress-bar">
-          <div className="progress-fill" style={{width: `${combo.progress}%`, background: combo.progress > 80 ? "linear-gradient(90deg,#00b36b,#34d399)" : combo.progress > 50 ? "linear-gradient(90deg,#ff8c00,#ffaa00)" : "#dc3545"}} />
-        </div>
-        <div style={{fontSize:13, color:C.textMuted, marginTop:6}}>
-          Last updated: {person.lastUpdated ? new Date(person.lastUpdated).toLocaleDateString() : "Never"}
-        </div>
-      </div>
-
-      <div style={{display:"flex", borderBottom:"3px solid #ff8c00", marginBottom:20}}>
-        {["assess","develop","notes"].map(t => (
-          <button key={t} onClick={()=>setTab(t)} style={{flex:1, padding:"14px", fontWeight:700, background:tab===t?C.orange:"#f1f3f5", color:tab===t?"#fff":"#333", border:"none"}}>
-            {t==="assess"?"📊 Profile":t==="develop"?"🛠 Develop":"📝 Notes"}
-          </button>
-        ))}
-      </div>
-
-      {tab==="assess" && Object.entries(person.scores).map(([k,v]) => {
-        const t = VIRTUES[k];
-        const showHas = v >= 2;
-        return (
-          <div key={k} style={{marginBottom:20, background:"#fff", border:`2px solid ${t.border}`, borderRadius:14, overflow:"hidden"}}>
-            <div style={{background:t.bg, padding:"16px 20px", display:"flex", alignItems:"center", gap:16}}>
-              <span style={{fontSize:42}}>{t.icon}</span>
-              <div style={{flex:1}}><div style={{fontSize:21, fontWeight:800, color:t.color}}>{t.label}</div></div>
-              <span style={{fontSize:18, fontWeight:700}}>{v}/3</span>
-            </div>
-            <div style={{padding:"20px"}}>
-              {(showHas ? t.strong : t.weak).map((s,i) => (
-                <div key={i} style={{marginBottom:6}}>{showHas?"→":"–"} {s}</div>
-              ))}
-            </div>
-          </div>
-        );
-      })}
-
-      {tab==="develop" && (
-        <div>
-          {Object.entries(person.scores).map(([k,v]) => {
-            const t = VIRTUES[k];
-            return (
-              <div key={k} style={{marginBottom:20, background:"#fff", border:`2px solid ${t.border}`, borderRadius:14, overflow:"hidden"}}>
-                <div style={{background:t.bg, padding:"14px 20px", display:"flex", alignItems:"center", gap:12}}>
-                  <span style={{fontSize:28}}>{t.icon}</span>
-                  <div style={{fontSize:18, fontWeight:800, color:t.color, flex:1}}>{t.label}</div>
-                  <span style={{fontSize:14, color:C.textMuted, background:"#fff", padding:"4px 10px", borderRadius:20, fontWeight:700}}>{SCORE_LABELS[v]}</span>
-                </div>
-                <div style={{padding:"16px 20px"}}>
-                  {t.develop.map((step,i) => (
-                    <div key={i} style={{display:"flex", gap:12, marginBottom:10, alignItems:"flex-start"}}>
-                      <span style={{background:C.orange, color:"#fff", borderRadius:"50%", width:22, height:22, display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, fontWeight:800, flexShrink:0}}>{i+1}</span>
-                      <span style={{fontSize:14, color:C.text, lineHeight:1.5}}>{step}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
-
-      {tab==="notes" && (
-        <div style={{background:"#fff", border:`1px solid ${C.border}`, borderRadius:12, padding:24, minHeight:200, whiteSpace:"pre-wrap", fontSize:15}}>
-          {person.notes || "No notes added yet."}
-        </div>
-      )}
-    </Modal>
-  );
-}
-
-const BLANK_ATHLETE = { id:"", name:"", role:"", notes:"", scores:{L:1,P:1,S:1,G:1,H:1,Gr:1,J:1}, lastUpdated: null };
-
-// ─── MAIN APP ─────────────────────────────────────────────────────────────────
-function App() {
-  const [tab, setTab] = useState("athletes");
-  const [athletes, setAthletes] = useState(() => load("awaygame_athletes_v1", []));
-  const [editing, setEditing] = useState(null);
-  const [viewing, setViewing] = useState(null);
-  const [deleteConfirm, setDeleteConfirm] = useState(null);
-
-  function saveAthlete(p) {
-    const updated = {...p, id: p.id || uid(), lastUpdated: Date.now()};
-    const next = p.id ? athletes.map(x => x.id === p.id ? updated : x) : [...athletes, updated];
-    setAthletes(next);
-    save("awaygame_athletes_v1", next);
-    setEditing(null);
-  }
-
-  function deleteAthlete(id) {
-    const next = athletes.filter(a => a.id !== id);
-    setAthletes(next);
-    save("awaygame_athletes_v1", next);
-    setDeleteConfirm(null);
-    if (viewing && viewing.id === id) setViewing(null);
-  }
-
-  const teamStats = calculateTeamProgress(athletes);
-
-  return (
-    <div style={{minHeight:"100vh", background:"#f8f9fa"}}>
-      {/* HEADER */}
-      <div style={{background:"#fff", borderBottom:"4px solid #ff8c00", padding:"0 24px", height:76, display:"flex", alignItems:"center", justifyContent:"space-between", boxShadow:"0 3px 12px rgba(0,0,0,0.1)"}}>
-        <div>
-          <div style={{fontFamily:"'Barlow Condensed',sans-serif", fontWeight:900, fontSize:32, letterSpacing:1.5, color:C.orange}}>AWAY GAME</div>
-          <div style={{fontSize:13, color:"#555"}}>Christian Parent’s Playbook</div>
-        </div>
-        <div style={{display:"flex", gap:8}}>
-          <button onClick={()=>setTab("athletes")} style={{padding:"10px 22px", borderRadius:10, background:tab==="athletes"?C.orange:"#fff", color:tab==="athletes"?"#fff":"#333", fontWeight:700, border:"2px solid #ff8c00"}}>👥 My Athletes</button>
-          <button onClick={()=>setTab("playbook")} style={{padding:"10px 22px", borderRadius:10, background:tab==="playbook"?C.orange:"#fff", color:tab==="playbook"?"#fff":"#333", fontWeight:700, border:"2px solid #ff8c00"}}>📖 The Playbook</button>
-        </div>
-      </div>
-
-      {tab === "athletes" && (
-        <div style={{padding:24}}>
-          {/* TEAM PROGRESS DASHBOARD */}
-          {athletes.length > 0 && (
-            <div className="team-card" style={{marginBottom:32}}>
-              <div style={{fontSize:20, fontWeight:800, marginBottom:16, color:C.orange}}>Team Progress Overview</div>
-              <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(180px, 1fr))", gap:20}}>
-                <div>
-                  <div style={{fontSize:13, color:C.textMuted}}>Team Average Score</div>
-                  <div style={{fontSize:32, fontWeight:800, color:C.orange}}>{teamStats.avgScore}</div>
-                  <div style={{fontSize:13}}>out of 3.0</div>
-                </div>
-                <div>
-                  <div style={{fontSize:13, color:C.textMuted}}>Strong Virtues</div>
-                  <div style={{fontSize:32, fontWeight:800, color: teamStats.strongPercent > 70 ? C.green : C.orange}}>{teamStats.strongPercent}%</div>
-                </div>
-                <div>
-                  <div style={{fontSize:13, color:C.textMuted}}>Athletes Tracked</div>
-                  <div style={{fontSize:32, fontWeight:800}}>{teamStats.totalAthletes}</div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:28}}>
-            <h1 style={{fontSize:28, fontWeight:800}}>My Athletes</h1>
-            <button onClick={()=>setEditing(BLANK_ATHLETE)} style={{background:C.orange, color:"#fff", border:"none", padding:"12px 28px", borderRadius:12, fontWeight:700}}>＋ Add Athlete</button>
-          </div>
-
-          {athletes.length === 0 ? (
-            <div style={{textAlign:"center", padding:"120px 20px", color:"#666"}}>
-              <div style={{fontSize:80}}>⚽️🏀🏈</div>
-              <div style={{fontSize:24, margin:"20px 0"}}>Start building your team’s character</div>
-              <button onClick={()=>setEditing(BLANK_ATHLETE)} style={{background:C.orange, color:"#fff", padding:"14px 36px", borderRadius:12, fontSize:17, fontWeight:700}}>Add Your First Athlete</button>
-            </div>
-          ) : (
-            <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(310px, 1fr))", gap:20}}>
-              {athletes.map(p => {
-                const combo = getCombo(p.scores);
-                return (
-                  <div key={p.id} style={{background:"#fff", border:`1px solid ${C.border}`, borderRadius:16, padding:22, boxShadow:"0 6px 20px rgba(0,0,0,0.07)", position:"relative"}}>
-                    <button 
-                      onClick={(e)=>{e.stopPropagation(); setDeleteConfirm(p);}} 
-                      className="delete-btn" 
-                      style={{position:"absolute", top:12, right:12}}
-                    >
-                      🗑
-                    </button>
-                    
-                    <div onClick={()=>setViewing(p)} style={{cursor:"pointer"}}>
-                      <div style={{fontSize:22, fontWeight:800, marginBottom:8}}>{p.name}</div>
-                      {p.role && <div style={{color:C.textSub, marginBottom:12}}>{p.role}</div>}
-                      
-                      <div style={{display:"flex", gap:8, flexWrap:"wrap", marginBottom:16}}>
-                        {Object.entries(p.scores).map(([k,v]) => (
-                          <div key={k} style={{background:VIRTUES[k].bg, padding:"6px 10px", borderRadius:8, fontSize:14}}>{VIRTUES[k].icon} {v}</div>
-                        ))}
-                      </div>
-
-                      <div style={{marginBottom:12}}>
-                        <div className="progress-bar">
-                          <div className="progress-fill" style={{width: `${combo.progress}%`, background: combo.progress > 80 ? "linear-gradient(90deg,#00b36b,#34d399)" : combo.progress > 50 ? "linear-gradient(90deg,#ff8c00,#ffaa00)" : "#dc3545"}} />
-                        </div>
-                      </div>
-
-                      <div style={{fontSize:13, color:C.textMuted}}>Last updated: {p.lastUpdated ? new Date(p.lastUpdated).toLocaleDateString() : "Never"}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
-
-      {tab === "playbook" && (
-        <div style={{padding:24, maxWidth:820, margin:"0 auto"}}>
-          <h2 style={{color:C.orange, marginBottom:8}}>The Seven Virtues</h2>
-          <p style={{color:C.textSub, marginBottom:32}}>Fruit of the Spirit applied to youth sports.</p>
-          {Object.values(VIRTUES).map(t => (
-            <div key={t.key} style={{marginBottom:24, background:"#fff", border:`1px solid ${t.border}`, borderRadius:16, padding:24}}>
-              <div style={{display:"flex", alignItems:"center", gap:16}}>
-                <span style={{fontSize:48}}>{t.icon}</span>
-                <div>
-                  <div style={{fontSize:22, fontWeight:800, color:t.color}}>{t.label}</div>
-                  <div style={{color:C.textSub}}>"{t.tagline}"</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {editing && <EditModal person={editing} onSave={saveAthlete} onClose={()=>setEditing(null)} />}
-      {viewing && <PersonDetail person={viewing} onClose={()=>setViewing(null)} onEdit={p=>{setViewing(null); setEditing(p);}} />}
-      {deleteConfirm && <ConfirmDelete name={deleteConfirm.name} onConfirm={()=>deleteAthlete(deleteConfirm.id)} onCancel={()=>setDeleteConfirm(null)} />}
+<main>
+    <div class="stats">
+        <div class="stat"><div class="stat-number" id="score">0</div><div>Correct</div></div>
+        <div class="stat"><div class="stat-number" id="total">0</div><div>Questions</div></div>
+        <div class="stat"><div class="stat-number" id="percent">0%</div><div>Accuracy</div></div>
     </div>
-  );
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+
+    <!-- QUIZ SECTION -->
+    <section id="quizSection">
+        <div class="card">
+            <div class="category" id="category"></div>
+            <div class="question" id="question"></div>
+            <div class="answers" id="answers"></div>
+            <div class="explanation" id="explanation"></div>
+        </div>
+        <div class="nav-buttons">
+            <button onclick="prevQuestion()" class="secondary">← Previous</button>
+            <button onclick="nextQuestion()">Next →</button>
+            <button onclick="shuffleQuestions()" class="secondary">🔀 Shuffle</button>
+            <button onclick="resetStats()" class="danger">🔄 Reset</button>
+        </div>
+    </section>
+
+    <!-- FLASHCARD SECTION -->
+    <section id="flashSection" class="hidden">
+        <div class="card flashcard" onclick="flipFlashcard()">
+            <div id="flashFront"></div>
+            <div class="flash-back" id="flashBack"></div>
+        </div>
+        <div style="text-align:center; margin:12px 0; opacity:0.7;" id="flashCounter"></div>
+        <div class="nav-buttons">
+            <button onclick="prevFlashcard()" class="secondary">← Prev</button>
+            <button onclick="nextFlashcard()">Next →</button>
+            <button onclick="shuffleFlashcards()" class="secondary">🔀 Shuffle</button>
+        </div>
+    </section>
+
+    <!-- SCENARIO SECTION -->
+    <section id="scenarioSection" class="hidden">
+        <div class="card">
+            <h2>🚨 Pediatric Scenario Trainer</h2>
+            <div class="scenario-box" id="scenarioText"></div>
+            <div class="scenario-answer" id="scenarioAnswer"></div>
+        </div>
+        <div class="nav-buttons">
+            <button onclick="prevScenario()" class="secondary">← Previous</button>
+            <button onclick="nextScenario()">Next →</button>
+        </div>
+    </section>
+
+    <!-- CRAM SECTION -->
+    <section id="cramSection" class="hidden">
+        <div class="card">
+            <h2>⚡ Pediatric Emergency Cram Sheet</h2>
+            
+            <h3>The Golden Rule of Pediatrics</h3>
+            <div class="tip"><strong>Kids are NOT little adults.</strong> They compensate longer, crash faster. A "tired-looking" or "calm" child in distress = IMPENDING FAILURE. Act now.</div>
+
+            <h3>Age-Based Vital Sign Ranges</h3>
+            <table class="table-sim">
+                <tr><th>Age</th><th>HR (normal)</th><th>RR (normal)</th><th>BP (systolic)</th></tr>
+                <tr><td><strong>Infant (0–12 mo)</strong></td><td>100–160</td><td>30–60</td><td>50–70</td></tr>
+                <tr><td><strong>Toddler (1–3 yr)</strong></td><td>90–150</td><td>24–40</td><td>80–100</td></tr>
+                <tr><td><strong>Preschool (3–6 yr)</strong></td><td>80–120</td><td>22–34</td><td>90–110</td></tr>
+                <tr><td><strong>School (6–12 yr)</strong></td><td>70–110</td><td>18–30</td><td>100–120</td></tr>
+                <tr><td><strong>Adolescent (12–18 yr)</strong></td><td>60–100</td><td>12–20</td><td>110–135</td></tr>
+            </table>
+
+            <h3>Red Flags in Pediatrics = CRITICAL</h3>
+            <div class="cram-grid">
+                <div class="tip">🚨 Stridor (croup, epiglottitis, foreign body)</div>
+                <div class="tip">🚨 Drooling with fever (epiglottitis risk)</div>
+                <div class="tip">🚨 Retractions + nasal flaring (respiratory distress)</div>
+                <div class="tip">🚨 Grunting (respiratory effort, pain)</div>
+                <div class="tip">🚨 Cyanosis (central = bad, peripheral = less urgent)</div>
+                <div class="tip">🚨 Altered mental status (sepsis, head injury, intoxication)</div>
+                <div class="tip">🚨 Petechial rash + fever (meningococcemia = EMERGENCY)</div>
+                <div class="tip">🚨 "Tired" or "calm" look during distress = DECOMPENSATION</div>
+            </div>
+
+            <h3>CPR Compressions & Ventilations (Pedi)</h3>
+            <div class="cram-grid">
+                <div class="tip"><strong>Compression Rate:</strong> 100–120/min (same as adults, all ages)</div>
+                <div class="tip"><strong>Compression Depth:</strong> At least 2 inches (5 cm) for 1–8 yr; ≥2 inches for >8 yr</div>
+                <div class="tip"><strong>Hand Position:</strong> 1-2 hands (infant = 2-finger); 2 hands (child)</div>
+                <div class="tip"><strong>Ventilation:</strong> 10–12/min, ~500 mL per breath (not huge puffs)</div>
+            </div>
+
+            <h3>Airway by Age</h3>
+            <div class="cram-grid">
+                <div class="tip"><strong>Infant (0–12 mo):</strong> Head neutral (not extended). Use oral airway if unresponsive + no gag.</div>
+                <div class="tip"><strong>Toddler–School (1–12 yr):</strong> Sniffing position. OPA if unconscious + no gag. BVM if RR inadequate.</div>
+                <div class="tip"><strong>Adolescent (12+ yr):</strong> Treat like adult. Sniffing position. OPA/NPA per protocol.</div>
+                <div class="tip"><strong>KEY:</strong> Infants are obligate nose-breathers. Clear nasal passages first if distressed.</div>
+            </div>
+
+            <h3>Respiratory Distress vs. Respiratory Failure</h3>
+            <table class="table-sim">
+                <tr><th>Feature</th><th>Distress (Compensating)</th><th>Failure (Decompensating)</th></tr>
+                <tr><td><strong>RR</strong></td><td>Increased</td><td>Slow, shallow, or irregular</td></tr>
+                <tr><td><strong>Retractions</strong></td><td>Present + anxious</td><td>Severe or ABSENT (tired)</td></tr>
+                <tr><td><strong>Air Movement</strong></td><td>Good</td><td>Decreased (silent chest)</td></tr>
+                <tr><td><strong>Skin</strong></td><td>Pale, anxious</td><td>Cyanotic or mottled</td></tr>
+                <tr><td><strong>LOC</strong></td><td>Alert, agitated</td><td>Altered or drowsy</td></tr>
+                <tr><td><strong>Action</strong></td><td>High-flow O₂, position up</td><td>BVM NOW, rapid transport</td></tr>
+            </table>
+
+            <h3>Shock in Kids (Pediatric Shock)</h3>
+            <div class="cram-grid">
+                <div class="tip"><strong>Early Shock (Compensated):</strong> Tachycardia, pale, cool extremities, normal BP (still compensating)</div>
+                <div class="tip"><strong>Late Shock (Decompensated):</strong> Bradycardia (bad sign!), hypotension, altered LOC, barely perfusing</div>
+                <div class="tip"><strong>KEY SIGN:</strong> Weak femoral pulse = shock. Compare to carotid. If weak, treat shock now.</div>
+                <div class="tip"><strong>Treatment:</strong> High-flow O₂, position supine, IV/IO fluids (ALS), rapid transport. DO NOT delay.</div>
+            </div>
+
+            <h3>Croup (Laryngotracheobronchitis)</h3>
+            <div class="cram-grid">
+                <div class="tip"><strong>Age:</strong> 6 months – 3 years (classic)</div>
+                <div class="tip"><strong>Signs:</strong> Barky, seal-like cough + stridor (worse at night)</div>
+                <div class="tip"><strong>Fever:</strong> Low-grade typical</div>
+                <div class="tip"><strong>Treatment:</strong> Cool mist, cool air, supportive. O₂ if hypoxic. Most resolve on their own.</div>
+                <div class="tip"><strong>Red Flag:</strong> Severe stridor at rest, drooling, tripoding = possible epiglottitis (different, more serious)</div>
+            </div>
+
+            <h3>Epiglottitis</h3>
+            <div class="cram-grid">
+                <div class="tip"><strong>Age:</strong> Often 2–6 years but any age</div>
+                <div class="tip"><strong>Classic Triad:</strong> Fever + sore throat + drooling</div>
+                <div class="tip"><strong>Position:</strong> Tripoding, leaning forward ("hot potato" voice)</div>
+                <div class="tip"><strong>DO NOT examine throat, do NOT agitate, do NOT lay flat. Keep parent with child.</strong></div>
+                <div class="tip"><strong>Action:</strong> High-flow O₂, upright position, allow position of comfort, prepare for airway loss, RAPID transport</div>
+            </div>
+
+            <h3>Foreign Body Aspiration (FBA)</h3>
+            <div class="cram-grid">
+                <div class="tip"><strong>Age Peak:</strong> 6 months – 4 years</div>
+                <div class="tip"><strong>Signs:</strong> Acute choking/coughing, stridor, unilateral decreased breath sounds (if lodged)</div>
+                <div class="tip"><strong>Treatment:</strong> High-flow O₂, position of comfort, rapid transport (let ALS/ENT remove)</div>
+                <div class="tip"><strong>DO NOT blind finger sweep. DO NOT induce vomiting. Careful suction if pooled secretions.</strong></div>
+            </div>
+
+            <h3>Febrile Seizure</h3>
+            <div class="cram-grid">
+                <div class="tip"><strong>Age:</strong> 6 months – 6 years (peak 18–24 mo)</div>
+                <div class="tip"><strong>Trigger:</strong> Rapid rise in fever (not necessarily high fever)</div>
+                <div class="tip"><strong>Type:</strong> Usually generalized tonic-clonic, <5 min, full recovery</div>
+                <div class="tip"><strong>Treatment:</strong> Protect from injury, high-flow O₂, rapid transport. Do NOT hold down. Position head to side.</div>
+                <div class="tip"><strong>NOT status epilepticus (unless recurrent without full recovery).</strong></div>
+            </div>
+
+            <h3>Meningitis (Bacterial) vs. Viral</h3>
+            <table class="table-sim">
+                <tr><th>Sign</th><th>Bacterial (EMERGENCY)</th><th>Viral</th></tr>
+                <tr><td><strong>Rash</strong></td><td>Petechial/purpuric (doesn't blanch)</td><td>Absent or maculopapular</td></tr>
+                <tr><td><strong>Appearance</strong></td><td>Toxic, altered LOC</td><td>Less toxic, more alert</td></tr>
+                <tr><td><strong>Neck Stiffness</strong></td><td>Often present</td><td>Mild or absent</td></tr>
+                <tr><td><strong>Fever</strong></td><td>High, with chills</td><td>Variable</td></tr>
+                <tr><td><strong>Action</strong></td><td>RAPID transport, O₂, IV/IO (ALS)</td><td>Transport, supportive care</td></tr>
+            </table>
+
+            <h3>Gastroenteritis vs. Intussusception</h3>
+            <table class="table-sim">
+                <tr><th>Feature</th><th>Gastroenteritis</th><th>Intussusception</th></tr>
+                <tr><td><strong>Age</strong></td><td>Any age</td><td>Peak 6–36 months</td></tr>
+                <tr><td><strong>Pain Pattern</strong></td><td>Continuous or crampy</td><td>Colicky (on/off every 5–10 min)</td></tr>
+                <tr><td><strong>Stools</strong></td><td>Loose, watery</td><td>"Currant jelly" (blood + mucus)</td></tr>
+                <tr><td><strong>Palpable Mass</strong></td><td>No</td><td>Yes (RUQ "sausage" shape)</td></tr>
+                <tr><td><strong>Action</strong></td><td>Fluid replacement, monitor</td><td>NPO, IV fluids (ALS), rapid transport</td></tr>
+            </table>
+
+            <h3>Dehydration Assessment (Mild → Severe)</h3>
+            <div class="cram-grid">
+                <div class="tip"><strong>MILD (3–5%):</strong> Normal BP, slightly dry mucous membranes, normal behavior</div>
+                <div class="tip"><strong>MODERATE (6–9%):</strong> Slightly decreased BP, dry mucous membranes, weak cry, delayed cap refill ≥2 sec</div>
+                <div class="tip"><strong>SEVERE (≥10%):</strong> Hypotensive, very dry mucous membranes, weak cry, delayed cap refill >2 sec, altered LOC</div>
+                <div class="tip"><strong>Action:</strong> Oral rehydration (mild), IV fluids (ALS, moderate–severe), rapid transport if severe</div>
+            </div>
+
+            <h3>Abuse/Neglect Red Flags</h3>
+            <div class="cram-grid">
+                <div class="tip">🚨 Injuries inconsistent with age/story (infant with femur fracture? toddler with internal bleeding?)</div>
+                <div class="tip">🚨 Injuries in multiple stages of healing</div>
+                <div class="tip">🚨 Bite marks, cigarette burns, immersion burns (lines)</div>
+                <div class="tip">🚨 Subdural hematoma, retinal hemorrhages (shaken baby)</div>
+                <div class="tip">🚨 Neglect signs (severe malnutrition, poor hygiene, developmental delay)</div>
+                <div class="tip"><strong>ACTION:</strong> Document objectively. Report to authorities per protocol. Do NOT accuse parents.</div>
+            </div>
+
+            <h3>Choking (Heimlich vs. Back Blows)</h3>
+            <div class="cram-grid">
+                <div class="tip"><strong>Infant (<1 yr):</strong> Back blows (5x) + chest thrusts (5x). Repeat until object out or unresponsive.</div>
+                <div class="tip"><strong>Child (>1 yr):</strong> Abdominal thrusts (Heimlich) above navel, below xiphoid. Repeat until object out.</div>
+                <div class="tip"><strong>Unconscious:</strong> Begin CPR. Check mouth between compressions, remove object if visible.</div>
+            </div>
+
+            <h3>SIDS Risk Factors & Prevention</h3>
+            <div class="cram-grid">
+                <div class="tip"><strong>Risk Factors:</strong> Prone position, soft objects in crib, overheating, co-sleeping, prematurity, low birth weight</div>
+                <div class="tip"><strong>Prevention:</strong> Back sleeping, firm surface, room-sharing without bed-sharing, pacifier, avoid overheating</div>
+                <div class="tip"><strong>During Transport:</strong> Handle gently, maintain warmth, position supine with airway clear</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PEDI DOSING SECTION -->
+    <section id="pediSection" class="hidden">
+        <div class="card">
+            <h2>👧 Pediatric Medications & Dosing</h2>
+            
+            <h3>Weight-Based Dosing Quick Reference</h3>
+            <div class="age-group">
+                <strong>Know the child's weight!</strong> Most pedi drugs are dosed by kg. Always ask caregivers. If unknown, use age-based estimates:<br><br>
+                • Infant (1 mo): ~4 kg<br>
+                • Infant (6 mo): ~7 kg<br>
+                • Toddler (1 yr): ~10 kg<br>
+                • Toddler (2 yr): ~12 kg<br>
+                • Preschool (3 yr): ~15 kg<br>
+                • Preschool (4 yr): ~16 kg<br>
+                • School (6 yr): ~20 kg<br>
+                • School (8 yr): ~25 kg<br>
+                • Older child (10 yr): ~30–35 kg
+            </div>
+
+            <h3>EMT-B Medications (Pedi Scope)</h3>
+            <div class="drug-card">
+                <strong>Oxygen (O₂)</strong><br>
+                <strong>Dose:</strong> 10–15 L/min non-rebreather (if tolerates)<br>
+                <strong>Infants/toddlers:</strong> May need high-flow mask or blow-by in fearful child
+            </div>
+            <div class="drug-card">
+                <strong>Oral Glucose</strong><br>
+                <strong>Dose:</strong> 5–10 g (depends on product, younger = less)<br>
+                <strong>Use:</strong> Hypoglycemia, alert, can swallow, no trauma/seizure<br>
+                <strong>Note:</strong> Older children = 15 g (standard)
+            </div>
+            <div class="drug-card">
+                <strong>Epinephrine Auto-Injector (Anaphylaxis)</strong><br>
+                <strong>Dose:</strong> 0.15 mg IM (<30 kg / <66 lbs)<br>
+                <strong>Dose:</strong> 0.3 mg IM (≥30 kg / ≥66 lbs)<br>
+                <strong>Route:</strong> Thigh IM. Massage 10 sec. Repeat every 5–15 min if needed.
+            </div>
+            <div class="drug-card">
+                <strong>Activated Charcoal (Ingestion)</strong><br>
+                <strong>Dose:</strong> 10–25 g (younger) to 50 g (older children)<br>
+                <strong>Use:</strong> Alert, gag reflex, recent ingestion (per poison control)
+            </div>
+            <div class="drug-card">
+                <strong>Aspirin (if protocol allows)</strong><br>
+                <strong>Dose:</strong> Age-based or 10–15 mg/kg<br>
+                <strong>Use:</strong> Chest pain, alert, no allergy<br>
+                <strong>Caution:</strong> Avoid in viral illness (Reye syndrome risk)
+            </div>
+
+            <h3>ALS Medications (Know for Test)</h3>
+            <div class="drug-card">
+                <strong>Epinephrine IV (Cardiac Arrest)</strong><br>
+                <strong>Dose:</strong> 0.01 mg/kg IV/IO (typically 0.1 mL of 1:10,000)<br>
+                <strong>Repeat every 3–5 min
+            </div>
+            <div class="drug-card">
+                <strong>Amiodarone (VF/VT)</strong><br>
+                <strong>Dose:</strong> 5 mg/kg IV/IO (max 300 mg first dose, 150 mg second)
+            </div>
+            <div class="drug-card">
+                <strong>Atropine (Bradycardia)</strong><br>
+                <strong>Dose:</strong> 0.02 mg/kg IV/IO (min 0.1 mg, max 0.5 mg single dose)<br>
+                <strong>Note:</strong> Second dose = 0.04 mg/kg (max 1 mg)
+            </div>
+            <div class="drug-card">
+                <strong>Sodium Bicarbonate (Metabolic Acidosis)</strong><br>
+                <strong>Dose:</strong> 1 mEq/kg IV/IO (0.5–1 ampule for infant, 1–2 for child)
+            </div>
+            <div class="drug-card">
+                <strong>Naloxone (Opioid OD)</strong><br>
+                <strong>Dose:</strong> 0.1 mg/kg IV/IO/IM (min 0.4 mg, max 2 mg)<br>
+                <strong>Note:</strong> Repeat every 2–3 min if no response
+            </div>
+            <div class="drug-card">
+                <strong>Dextrose (Hypoglycemia IV)</strong><br>
+                <strong>Dose:</strong> 0.5–1 g/kg IV (D25 or D50 depending on concentration)<br>
+                <strong>Note:</strong> Infant-friendly D25 to avoid hyperosmolarity
+            </div>
+
+            <h3>Intraosseous (IO) Access Basics</h3>
+            <div class="age-group">
+                <strong>When to use IO:</strong> Cardiac arrest, severe shock, unable to obtain IV<br>
+                <strong>Sites (by age):</strong><br>
+                • <3 yr: Proximal tibia (below knee, medial)<br>
+                • >3 yr: Proximal humerus (also acceptable)<br>
+                <strong>Any medication/fluid can go IO = as fast as IV.</strong>
+            </div>
+
+            <h3>Pedi BVM Tips</h3>
+            <div class="age-group">
+                <strong>Mask Size Matters:</strong><br>
+                • Too big = leaks, poor seal<br>
+                • Too small = doesn't cover nose + mouth<br>
+                <strong>Ventilation Volume:</strong> Use just enough to see chest rise (avoid over-inflation = gastric distention)<br>
+                <strong>Rate:</strong> 10–12/min (same as adults)
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+// ==================== 57 PEDIATRIC QUESTIONS ====================
+const questions = [
+    {category:"Airway",question:"A 4-month-old infant is unresponsive with snoring respirations. No gag reflex. What is your first intervention?",answers:["Insert nasopharyngeal airway","Insert oropharyngeal airway","Place in recovery position","Perform blind finger sweep"],correct:1,explanation:"In an unresponsive infant with no gag reflex, insert an OPA to maintain airway. NPA is contraindicated in infants <12 months in most protocols.",memory:"Infant no gag = OPA (not NPA). Head neutral, not extended."},
+
+    {category:"Breathing",question:"A 2-year-old with croup has barky cough and mild stridor. RR 28, O₂ sat 96% on room air. What do you do?",answers:["Give high-flow oxygen immediately","Cool mist, supportive care, transport","Perform cricothyrotomy","Force the child to lie flat"],correct:1,explanation:"Croup in a toddler is usually viral and self-limited. Cool mist/air helps. Oxygen if hypoxic. Do not agitate. Most cases resolve on their own.",memory:"Croup = Barky cough + stridor. Cool air helps. Don't agitate."},
+
+    {category:"Respiratory",question:"A 3-year-old has severe retractions, nasal flaring, grunting, and RR 50. Air entry is weak. What is the priority?",answers:["Lay flat to reduce work of breathing","High-flow oxygen, position upright, prepare BVM, rapid transport","Give oral glucose","Wait and see approach"],correct:1,explanation:"Severe retractions + weak air movement = respiratory failure risk. High-flow O₂, upright position, BVM ready, rapid transport.",memory:"Retractions + weak breath sounds = Failing. BVM NOW."},
+
+    {category:"Shock",question:"A 18-month-old hit by car. Pale, cold extremities, HR 160, weak femoral pulse. BP not obtainable by palpation. What is this?",answers:["Mild shock","Compensated hypovolemic shock","Decompensated shock (late shock)","Normal response to injury"],correct:1,explanation:"Pale + cold + tachycardia + weak femoral pulse = compensated shock. Weak femoral = key sign. Treat now: O₂, position supine, IV/IO fluids (ALS), rapid transport.",memory:"Weak femoral pulse = Shock. Act now before BP drops."},
+
+    {category:"Pediatric",question:"A 6-year-old in respiratory distress looks 'tired' and is unusually calm. What is your concern?",answers:["Child is relaxing, probably fine","Impending respiratory failure = treat urgently","Normal compensation","Give sedatives"],correct:1,explanation:"'Tired' appearance during distress = decompensation. Child is failing, not relaxing. Oxygen, BVM ready, rapid transport NOW.",memory:"Tired/calm + distress = DANGER. Not reassuring."},
+
+    {category:"Febrile",question:"A 20-month-old has fever (39.5°C), sudden generalized seizure lasting 2 minutes. Parent says he's had seizures before with fever. Post-seizure: back to normal. What is this?",answers:["Status epilepticus","Febrile seizure","Meningitis","Epilepsy"],correct:1,explanation:"Febrile seizure: peak 18–24 months, rapid fever rise, short (<5 min), full recovery. Document but usually self-limited. Rapid transport for evaluation.",memory:"Fever + quick seize + full recovery = Febrile seizure."},
+
+    {category:"Epiglottitis",question:"A 4-year-old has fever, sore throat, drooling, and stridor. In tripod position. What is your action?",answers:["Examine the throat with a tongue blade","Keep calm, high-flow O₂, upright position, do NOT agitate, rapid transport","Lay supine for airway access","Give oral fluids"],correct:1,explanation:"Epiglottitis is an airway emergency. Do NOT examine throat or agitate. Keep calm, upright, prepare for airway loss, RAPID transport.",memory:"Epiglottitis = Fever + drool + stridor. Do NOT agitate."},
+
+    {category:"FBA",question:"A 2-year-old suddenly choked on a peanut. Now has stridor and unilateral decreased breath sounds on left. What do you do?",answers:["Perform blind finger sweep","Lay on left side (affected side down)","High-flow O₂, position of comfort, careful suctioning if needed, rapid transport","Perform Heimlich NOW"],correct:2,explanation:"Foreign body aspiration with stridor = airway emergency. Do NOT blind sweep. Oxygen, position of comfort, rapid transport for removal.",memory:"FBA + stridor = O₂, position, transport (let ENT remove)."},
+
+    {category:"Choking",question:"An 8-month-old is choking on a toy. Cannot cough or cry. What is your action?",answers:["Abdominal thrusts","Back blows (5x) + chest thrusts (5x), repeat","Blind finger sweep","Lay flat, perform CPR"],correct:1,explanation:"Infants <1 year: back blows + chest thrusts. NOT abdominal thrusts (risk of organ injury). Repeat until object dislodged or becomes unresponsive.",memory:"Infant choking = Back blows + Chest thrusts (no abdo)."},
+
+    {category:"Meningitis",question:"A 3-year-old has fever, lethargy, petechial rash (doesn't blanch), and neck stiffness. BP 78/50. What is the likely diagnosis?",answers:["Viral meningitis","Bacterial meningitis (meningococcemia)","Febrile seizure","Simple gastroenteritis"],correct:1,explanation:"Petechial rash + fever + altered LOC + shock = meningococcal meningitis. EMERGENCY. High-flow O₂, IV/IO fluids (ALS), rapid transport.",memory:"Petechiae + fever + shock = Meningococcal (EMERGENCY)."},
+
+    {category:"Intussusception",question:"A 18-month-old has sudden onset of severe colicky abdominal pain every 5–10 minutes, vomiting, and pale stools mixed with blood. Palpable mass in RUQ. What is this?",answers:["Constipation","Gastroenteritis","Intussusception (bowel-in-bowel)","Appendicitis"],correct:2,explanation:"Classic intussusception: peak 6–36 months, colicky pain, 'currant jelly' stools, palpable sausage mass. Gentle transport, NPO, IV fluids (ALS).",memory:"Sausage mass + colicky pain + currant jelly = Intussusception."},
+
+    {category:"Dehydration",question:"A 2-year-old with gastroenteritis: dry mucous membranes, slightly decreased BP, delayed cap refill 2–3 seconds, weak cry, alert. What degree of dehydration?",answers:["Mild (3–5%)","Moderate (6–9%)","Severe (≥10%)","No dehydration"],correct:1,explanation:"Moderate dehydration: dry mucous membranes, decreased BP, delayed cap refill ≥2 sec, weak cry. IV fluids (ALS), monitor, transport.",memory:"Dry mouth + slow cap refill + low BP = Moderate dehydration."},
+
+    {category:"Burns",question:"A 3-year-old pulled a pot of boiling water down. Burns to anterior torso and right arm (approximately 15% TBSA). What is the priority?",answers:["Cool the burn with ice water for 30 minutes","Stop the heat (remove clothes), cool with room-temperature water, high-flow O₂, IV fluids (ALS), rapid transport","Apply butter or ointment","Elevate the burned area"],correct:1,explanation:"Burn >10% = fluid resuscitation needed (ALS). Cool with water, remove clothes, oxygen, cover with clean dry cloth, rapid transport.",memory:"Burns >10% TBSA = IV fluids. Cool, transport."},
+
+    {category:"Head Injury",question:"A 6-year-old fell from a swing 4 feet. Now has vomiting, headache, drowsy but rousable. Equal pupils. What is your concern?",answers:["Concussion only","Possible intracranial bleeding (even alert kids can deteriorate)","Spinal fracture guaranteed","Normal post-fall behavior"],correct:1,explanation:"Head injury with vomiting = concerning. Even if alert now, can deteriorate from brain swelling. C-spine precautions, high-flow O₂, rapid transport.",memory:"Head injury + vomiting = Possible bleeding. Transport, monitor."},
+
+    {category:"Seizure Status",question:"A 5-year-old has had 4 seizures in 15 minutes, post-ictal. What is this?",answers:["Febrile seizure","Status epilepticus","Absence seizure","Normal seizure activity"],correct:1,explanation:"Status epilepticus: recurrent seizures without full recovery between them. EMERGENCY. High-flow O₂, protect airway, IV access (ALS), rapid transport.",memory:"Recurrent seizures = Status. EMERGENCY."},
+
+    {category:"Diabetic",question:"A 7-year-old known diabetic is confused, trembling, sweating. Glucometer reads 45 mg/dL. Alert enough to swallow. What do you do?",answers:["Give insulin","Oral glucose (if protocol allows) or transport for IV D25 (ALS)","Wait and monitor","Give ice water"],correct:1,explanation:"Hypoglycemia in child: alert + can swallow = try oral glucose if protocol allows. If altered LOC or no improvement, transport for IV (ALS).",memory:"Hypo + alert = Glucose by mouth. Hyper = nothing."},
+
+    {category:"Anaphylaxis",question:"A 5-year-old has facial swelling, wheezing, and hives 3 minutes after eating peanuts. HR 140, BP 88/60 (low for age). What do you give?",answers:["Antihistamine only","Epinephrine IM 0.15 mg NOW, then oxygen","Aspirin","Observation at home"],correct:1,explanation:"Anaphylaxis with airway involvement (wheezing) + hypotension = epinephrine 0.15 mg IM (<30 kg). High-flow O₂, rapid transport.",memory:"Wheezing + shock + allergic = EPI-PEN NOW."},
+
+    {category:"Asthma",question:"An 8-year-old asthmatic has wheezing, RR 45, using accessory muscles, speaking only 1–2 words. Oxygen sat 88%. What is the priority?",answers:["Teach deep breathing exercises","High-flow oxygen, position upright, prepare for BVM, rapid transport","Give oral glucose","Calm the child, no intervention yet"],correct:1,explanation:"Severe asthma with poor oxygenation and air movement = respiratory failure risk. High-flow O₂, upright, transport. Albuterol at hospital.",memory:"Wheezing + 1-word dyspnea + low O₂ = SEVERE asthma."},
+
+    {category:"Cyanosis",question:"A newborn appears cyanotic (blue lips, tongue). HR 90, RR 20. Appears calm. What is your concern?",answers:["Normal newborn finding","Possible congenital heart disease or respiratory issue = urgent evaluation needed","Just needs warmth","Observation at home"],correct:1,explanation:"Cyanosis in newborn = concern for cardiac/respiratory problem. High-flow O₂, keep warm, rapid transport to facility with NICU.",memory:"Newborn cyanotic = Cardiac/respiratory issue. Transport."},
+
+    {category:"SIDS",question:"An 8-week-old found unresponsive in mother's bed next to her. What are the risk factors you'd note?",answers:["Supine sleeping only","Prone position + co-sleeping + soft objects = SIDS risk factors","Back sleeping is dangerous","No risk if mother is awake"],correct:1,explanation:"SIDS risk factors: prone sleeping, soft objects, co-sleeping, overheating. Prevention = back sleeping, firm surface, room-sharing without bed-sharing.",memory:"SIDS = Prone + Soft + Co-sleep. Prevent with back sleeping."},
+
+    {category:"Pediatric",question:"A 10-year-old complains of severe abdominal pain, vomiting, and a rigid abdomen. BP low, HR 140. Appendicitis suspected. What is your action?",answers:["Give pain medication and transport","NPO, high-flow O₂, IV fluids (ALS), rapid transport to surgical facility","Massage the abdomen","Lay flat with legs elevated"],correct:1,explanation:"Acute abdomen with shock = possible perforation/peritonitis. NPO, oxygen, fluids (ALS), surgical evaluation ASAP.",memory:"Rigid abdomen + shock = Surgical emergency."},
+
+    {category:"Trauma",question:"A 4-year-old hit by car. Unresponsive, GCS 7. Crushed lower extremities. Rapid shallow breathing. What is your immediate action?",answers:["Splint the legs first","High-flow O₂, prepare BVM, C-spine precautions, IV/IO (ALS), rapid transport","Position supine","Transport slowly, treat at scene"],correct:1,explanation:"Trauma with altered LOC + respiratory compromise = airway/breathing emergency. O₂, BVM ready, IV/IO, rapid transport.",memory:"Trauma + altered LOC = Airway threat."},
+
+    {category:"Poisoning",question:"A 3-year-old ingested an unknown number of mother's iron tablets 15 minutes ago. Alert. What do you do?",answers:["Give activated charcoal at scene","Call poison control (1-800-222-1222), transport for evaluation, no charcoal at scene (ALS may give at hospital)","Induce vomiting","Wait and monitor for symptoms"],correct:1,explanation:"Unknown pediatric ingestion = poison control + transport. Iron is toxic. Do NOT delay.",memory:"Ingestion = Poison Control + Transport."},
+
+    {category:"Respiratory",question:"A 6-month-old has fast, shallow breathing (RR 60), nasal flaring, subcostal retractions, wheezing, and RR decreased from 80 to 60 over 2 minutes. What is happening?",answers:["Improving","Worsening/failing respiratory status","Normal infant breathing","Needing to relax"],correct:1,explanation:"RR DECREASING in respiratory distress = failing compensation. Respiratory failure imminent. BVM NOW, high-flow O₂, rapid transport.",memory:"RR dropping + distress = FAILURE. BVM NOW."},
+
+    {category:"CPR",question:"You are doing CPR on a 5-year-old. What compression rate and depth are you using?",answers:["60 compressions/min, 1–1.5 inches deep","100–120 compressions/min, at least 2 inches deep (5 cm)","40 compressions/min, very shallow","80 compressions/min, 1.5 inches"],correct:1,explanation:"Pedi CPR: 100–120 compressions/min (same as adults), ≥2 inches (5 cm) depth for child 1–8 yr.",memory:"Pedi CPR = 100–120/min, ≥2 inches."},
+
+    {category:"Abuse",question:"A 2-year-old with multiple bruises in different healing stages, cigarette burns, and a spiral fracture of the femur. What do you suspect?",answers:["Normal childhood accidents","Abuse/non-accidental trauma (NAT)","Accidental fall","Vitamin K deficiency"],correct:1,explanation:"Multiple injuries + different healing stages + injuries inconsistent with age/story = abuse. Document objectively, report per protocol.",memory:"Multiple injuries at different stages = Abuse risk."},
+
+    {category:"Birth",question:"A pregnant woman in labor delivers a baby at home. Cord is wrapped around the baby's neck. Baby is blue and not breathing. What is your action?",answers:["Leave cord alone, do CPR","Gently slip cord over head if possible, dry baby, stimulate breathing, provide O₂ if needed","Cut the cord immediately","Wait for hospital arrival"],correct:1,explanation:"Nuchal cord (cord around neck): if present and tight, gently slip over head. Dry baby, stimulate, oxygen if needed. Clamp/cut per protocol.",memory:"Nuchal cord = Slip over head gently."},
+
+    {category:"Drowning",question:"A 4-year-old pulled from a pool, unresponsive, cyanotic. No gag reflex. What is your action?",answers:["Position in recovery position","High-flow oxygen, BVM if apneic, C-spine precautions (mechanism suggests trauma), rapid transport","Perform Heimlich","Drain lungs by tilting"],correct:1,explanation:"Near-drowning: airway, breathing, rapid transport. Secondary drowning can occur hours later. Monitor closely.",memory:"Drowning = O₂, BVM, transport."},
+
+    {category:"Fever",question:"A 1-year-old has fever 39°C, lethargy, and a rash on the trunk. No specific complaint. Rash doesn't blanch. What is your concern?",answers:["Simple fever","Possible meningococcemia/sepsis = EMERGENCY","Viral rash","Teething fever"],correct:1,explanation:"Non-blanching petechial rash + fever + lethargy = meningococcemia. URGENT: O₂, IV/IO, fluids (ALS), rapid transport.",memory:"Non-blanching + fever = Meningococcal."},
+
+    {category:"Pediatric",question:"An 11-year-old is hit in the chest during soccer practice. Now has chest pain and tachycardia. What is your concern?",answers:["Just rib contusion","Commotio cordis (sudden cardiac arrest from blunt chest trauma)","Normal","Anxiety"],correct:1,explanation:"Blunt chest trauma + sudden cardiac symptoms = commotio cordis risk. Even alert kids can arrest. Monitor, oxygen, transport, AED ready.",memory:"Blunt chest + sudden symptoms = Cardiac risk."},
+
+    {category:"Seizure",question:"A 2-year-old with fever has a generalized seizure lasting 3 minutes. During seizure, he aspirates stomach contents. Post-seizure: unresponsive. What is your action?",answers:["Position supine","Position left-lateral decubitus (recovery position), suction if needed, oxygen, monitor for re-seizure, rapid transport","Give pain medication","Leave prone"],correct:1,explanation:"Post-ictal with possible aspiration = recovery position, gentle suctioning, oxygen, monitor, transport. Secondary aspiration pneumonia risk.",memory:"Post-seizure + aspiration = Recovery position."},
+
+    {category:"Foreign Body",question:"A 1-year-old swallowed a button battery. Parent notes it happened 2 hours ago. What is the priority?",answers:["Observe at home for 24 hours","URGENT hospital evaluation (button batteries cause esophageal burns). Transport immediately.","Give milk to coat the battery","Induce vomiting"],correct:1,explanation:"Button batteries = chemical burns within hours. Urgent removal needed. Do NOT induce vomiting.",memory:"Button battery = URGENT. No delay."},
+
+    {category:"Pediatric",question:"A 7-year-old with asthma has a severe exacerbation. Wheezing bilaterally, RR 50, using accessory muscles, cannot complete sentences. What should you NOT do?",answers:["Give oxygen","Force the child to lie flat (should be upright)","Get IV access (ALS)","Monitor closely"],correct:1,explanation:"Asthma exacerbation: keep upright (helps breathing), never force flat. High-flow O₂, position up, rapid transport.",memory:"Asthma = Keep upright. Never force flat."},
+
+    {category:"Newborn",question:"You deliver a newborn at scene. Baby is pale, limp, not breathing, HR 60. What is your action?",answers:["Wrap and observe","High-flow oxygen, begin BVM at 10–12/min, IV/IO if prolonged resuscitation (ALS), rapid transport","Position prone","Wait for cry"],correct:1,explanation:"Newborn apneic + bradycardic = respiratory depression. BVM NOW, oxygen, rapid transport. Most newborns respond quickly to ventilation.",memory:"Apneic newborn = BVM first."},
+
+    {category:"Pediatric",question:"A 3-year-old with croup suddenly develops stridor at rest, drooling, tripod position. What is your concern?",answers:["Simple croup","Possible epiglottitis (different, more serious)","Teething","Nothing to worry about"],correct:1,explanation:"Sudden worsening + tripoding + drooling = possible epiglottitis. Do NOT agitate. Transport urgently.",memory:"Croup worsening = Think epiglottitis."},
+
+    {category:"Shock",question:"A 18-month-old in shock: pale, cold, weak femoral pulse, altered LOC. Weight estimated 12 kg. What is the initial fluid bolus (ALS)?",answers:["5 mL/kg","20 mL/kg IV/IO (240 mL) over 5–10 min, reassess","50 mL/kg","No fluids until at hospital"],correct:1,explanation:"Pediatric shock: initial bolus = 20 mL/kg rapid IV/IO. For 12 kg = 240 mL. Reassess and repeat if needed.",memory:"Pedi shock = 20 mL/kg bolus."},
+
+    {category:"Respiratory",question:"A 5-month-old has bronchiolitis: fast RR 65, retractions, crackles bilaterally. SpO₂ 89%. What is your treatment?",answers:["Nebulized albuterol at scene","High-flow oxygen, position upright, rapid transport (albuterol at hospital)","Aggressive chest compressions","Position prone"],correct:1,explanation:"Bronchiolitis: viral, supportive care. Oxygen if hypoxic, upright position, transport. Albuterol at hospital per protocol.",memory:"Bronchiolitis = O₂, upright, transport."},
+
+    {category:"Pediatric",question:"A 4-year-old has stridor, respiratory distress, and drooling after inhaling peanut. Unilateral decreased breath sounds. What is the primary concern?",answers:["Croup","Foreign body aspiration (airway emergency)","Epiglottitis","Asthma"],correct:1,explanation:"Acute stridor after foreign body inhalation = FBA. Do NOT examine or manipulate. Oxygen, position of comfort, rapid transport.",memory:"FBA + stridor = Do NOT examine. Transport."},
+
+    {category:"Trauma",question:"A 6-year-old has a head injury with GCS 14 (confused). Equal pupils. What red flag would prompt immediate rapid transport?",answers:["Mild headache","Loss of consciousness, unequal pupils, signs of brainstem injury","Normal behavior","No need to transport"],correct:1,explanation:"Head injury with altered mental status or signs of increased ICP = URGENT. C-spine precautions, oxygen, rapid transport.",memory:"Head injury + altered LOC = Urgent transport."},
+
+    {category:"Birth",question:"A newborn is born with meconium-stained amniotic fluid and is unresponsive, not breathing, HR 80. What is your action?",answers:["No intervention needed","Dry, stimulate, high-flow O₂, BVM if no response, rapid transport","Perform CPR immediately","Clean the mouth first"],correct:1,explanation:"Newborn meconium aspiration risk: stimulate, dry, oxygen, BVM if not breathing after stimulation.",memory:"Meconium + apneic = BVM."},
+
+    {category:"Pediatric",question:"A 2-year-old had a febrile seizure 5 minutes ago. Now post-ictal but alert. Temperature 38.5°C. What is your action?",answers:["Leave at home, no transport needed","Transport for evaluation (first febrile seizure = workup needed)","Give antipyretics and discharge","Do CPR"],correct:1,explanation:"First febrile seizure = transport for evaluation (rule out meningitis, other causes). Even though child seems fine now.",memory:"First febrile seizure = Transport for workup."},
+
+    {category:"Respiratory",question:"An 8-year-old has wheezing, 'seesaw' breathing (paradoxical abdominal/chest movement), severe distress. What is this?",answers:["Mild asthma","Severe asthma / respiratory failure","Normal childhood asthma","Anxiety attack"],correct:1,explanation:"Seesaw breathing + severe distress = respiratory failure. Immediate high-flow O₂, BVM ready, rapid transport.",memory:"Seesaw breathing = Failing. BVM ready."},
+
+    {category:"Pediatric",question:"A 10-month-old is in severe shock after fever. Petechial rash. Parent says he was fine this morning. What is the likely diagnosis?",answers:["Viral infection","Meningococcal sepsis (fulminant)","Simple gastroenteritis","Normal fever response"],correct:1,explanation:"Rapid deterioration + petechiae + shock = fulminant meningococcemia. EMERGENCY. O₂, IV/IO, fluids, rapid transport to ICU-capable facility.",memory:"Fever + petechiae + rapid shock = Meningococcal."},
+
+    {category:"CPR",question:"You are doing CPR on a 3-month-old infant. What compression technique are you using?",answers:["Two-hand technique","Two-finger technique (encircle chest with hands, thumbs on sternum)","Heel of hand","Flat palm"],correct:1,explanation:"Infant CPR: two-finger technique (index + middle on sternum, other hand supporting back) or two-thumb encircling hands for lone rescuer CPR.",memory:"Infant CPR = 2-finger or encircling thumb technique."},
+
+    {category:"Pediatric",question:"A 4-year-old has refractory seizures (multiple seizures despite interventions). Status epilepticus. What medication is typically given (ALS)?",answers:["Aspirin","Lorazepam or midazolam IV/IO/IN (benzodiazepine)","Glucose","Epinephrine"],correct:1,explanation:"Status epilepticus: benzodiazepine (lorazepam, midazolam) is first-line. Dosing = 0.1–0.2 mg/kg IV/IO/IN.",memory:"Status = Benzodiazepine (lorazepam/midazolam)."},
+
+    {category:"Pediatric",question:"A 5-year-old has acute epiglottitis and is starting to lose consciousness. Stridor worsening. What is your action?",answers:["Attempt to intubate yourself","Do NOT force any intervention. Be prepared for complete airway loss. Have suction/BVM ready. Allow patient to choose position. Prepare for emergency airway (ALS).","Lay child flat to examine","Give sedatives to relax"],correct:1,explanation:"Epiglottitis with impending airway loss: prepare for emergency airway. Do NOT manipulate. Allow position of comfort.",memory:"Epiglottitis worsening = Prepare for airway emergency."},
+
+    {category:"Pediatric",question:"A 7-month-old is in shock, unresponsive. You cannot obtain IV access after 3 minutes. What is your next step?",answers:["Keep trying IV","Attempt IO access (proximal tibia)","Transport without vascular access","Delay resuscitation"],correct:1,explanation:"Pediatric shock: if IV fails after 2–3 minutes, establish IO (intraosseous). Proximal tibia in infant.",memory:"Can't get IV = Go IO."},
+
+    {category:"Pediatric",question:"A 9-year-old has severe abdominal pain and is vomiting greenish fluid. Abdomen is distended, no bowel sounds. What is your concern?",answers:["Simple gastroenteritis","Bowel obstruction (surgical emergency)","Constipation","Hunger pain"],correct:1,explanation:"Obstruction signs: severe pain, bilious vomiting, distention, absent bowel sounds. NPO, transport to surgical facility.",memory:"Green vomit + distention + no sounds = Obstruction."},
+
+    {category:"Pediatric",question:"A 3-year-old ingested an unknown medication. Alert. What is the max dose of activated charcoal you'd consider giving (if protocol allows)?",answers:["5 g","10–15 g (child)","25–50 g","No charcoal at scene"],correct:2,explanation:"Pedi charcoal: 10–25 g (younger child) to 50 g (older child). Per poison control. Max 50 g.",memory:"Pedi charcoal = 10–25g (young) to 50g (older)."},
+
+    {category:"Pediatric",question:"A 2-year-old has a fever, petechial rash, is alert but irritable, HR 160, RR 45. Capillary refill 3 seconds. What is the likely diagnosis?",answers:["Viral exanthem","Early meningococcal sepsis","Simple fever","Teething"],correct:1,explanation:"Petechiae + fever + tachycardia + slow cap refill = meningococcemia. Transport urgently with O₂, IV/IO ready (ALS).",memory:"Petechiae + fever + tachycardia = Meningococcal."},
+
+    {category:"Airway",question:"A 18-month-old aspirated a peanut. Now silent chest (no breath sounds), severe distress, cyanotic. What is your immediate action?",answers:["Perform blind finger sweep","High-flow oxygen, position of comfort, prepare for airway emergency, rapid transport","Perform abdominal thrusts","Lay flat"],correct:1,explanation:"Foreign body with complete airway obstruction = airway emergency. Do NOT blind sweep. Oxygen, position, rapid transport for removal.",memory:"FBA + silent chest = Airway emergency."},
+
+    {category:"Pediatric",question:"A 5-year-old with asthma exacerbation has HR 170, RR 70, barely speaking, SpO₂ 78% on room air. What is this?",answers:["Mild asthma","Status asthmaticus (severe, life-threatening)","Normal asthma","Anxiety"],correct:1,explanation:"Status asthmaticus: severe asthma with poor oxygenation, very fast RR/HR. Immediate high-flow O₂, BVM ready, rapid transport.",memory:"Severe asthma + low O₂ + tachycardia = Status asthmaticus."},
+
+    {category:"Pediatric",question:"A 2-year-old with congenital heart disease presents cyanotic, gasping, HR 220. What is this emergency?",answers:["Syncope","Hyperplastic spells (tet spells) or acute cardiac decompensation","Simple playing","Normal for CHD"],correct:1,explanation:"Tet spell or acute CHD decompensation: cyanosis + gasping + extreme tachycardia. Oxygen, calm, knee-chest position, rapid transport.",memory:"CHD + acute cyanosis = Cardiac emergency."},
+
+    {category:"Pediatric",question:"A 10-year-old has sudden severe headache, stiff neck, fever, vomiting. What is the red flag?",answers:["Simple migraine","Possible meningitis = urgent transport with precautions","Tension headache","Hunger pain"],correct:1,explanation:"Fever + stiff neck + vomiting + headache = meningitis. Transport urgently, start precautions.",memory:"Fever + stiff neck + vomiting = Meningitis."},
+
+    {category:"Pediatric",question:"A 3-year-old with severe burn (25% TBSA) has copious secretions and stridor. What is your concern?",answers:["Mild burn","Potential airway loss from edema. Do NOT delay transport. Have BVM ready.","Normal post-burn","Lay flat for drainage"],correct:1,explanation:"Major burn with airway involvement: edema develops rapidly. Oxygen, position, BVM ready, prepare for emergency airway, rapid transport.",memory:"Burns + stridor = Edema risk. Airway emergency."},
+
+    {category:"Pediatric",question:"A 4-month-old has no tears when crying, extremely dry mucous membranes, weak cry, and no urine in 8 hours. What degree of dehydration?",answers:["Mild","Moderate","Severe (≥10%)","No dehydration"],correct:2,explanation:"Severe dehydration: no tears, very dry mucous membranes, weak cry, poor perfusion. IV fluids (ALS), careful monitoring, rapid transport.",memory:"No tears + very dry + weak cry = Severe dehydration."},
+
+    {category:"Pediatric",question:"A 7-year-old with acute leukemia presents with fever, petechiae, and altered mental status. What is the likely complication?",answers:["Simple viral infection","Sepsis/septic shock from immunosuppression","Normal fever","Teething"],correct:1,explanation:"Immunocompromised (cancer/chemo) + fever + petechiae + altered LOC = sepsis. Oxygen, IV/IO, fluids (ALS), rapid transport to oncology center.",memory:"Immunosuppressed + fever + petechiae = Sepsis."},
+];
+
+const flashcards = [
+    ["Infant Vitals","HR 100–160, RR 30–60, BP 50–70 systolic"],
+    ["Toddler Vitals","HR 90–150, RR 24–40, BP 80–100 systolic"],
+    ["School Age Vitals","HR 70–110, RR 18–30, BP 100–120 systolic"],
+    ["OPA Infant","Unconscious, no gag reflex, head neutral position"],
+    ["Croup","Barky cough + stridor, 6 mo–3 yr, usually viral, cool air"],
+    ["Epiglottitis","Fever + drooling + stridor, tripod position, DO NOT AGITATE"],
+    ["Febrile Seizure","6 mo–6 yr, fever, brief seizure, full recovery typical"],
+    ["Meningococcemia","Petechial rash (non-blanching) + fever + shock = EMERGENCY"],
+    ["Intussusception","6–36 mo peak, sausage mass, colicky pain, currant jelly stools"],
+    ["Dehydration Mild","3–5%: dry mucous membranes, alert, normal BP"],
+    ["Dehydration Mod","6–9%: decreased BP, slow cap refill, weak cry"],
+    ["Dehydration Severe","≥10%: hypotensive, very dry, altered LOC, weak/no pulse"],
+    ["FBA","Sudden stridor, unilateral decreased BS, DO NOT blind sweep"],
+    ["Infant Choking","Back blows (5x) + chest thrusts (5x), NOT abdominal thrusts"],
+    ["Child Choking","Abdominal thrusts (Heimlich) above navel, below xiphoid"],
+    ["Respiratory Distress","Retractions, nasal flare, tachypnea, good air movement"],
+    ["Respiratory Failure","Slow/shallow RR, weak retractions or ABSENT, poor air, altered LOC"],
+    ["Pedi CPR Rate","100–120 compressions/min (same as adults)"],
+    ["Pedi Compression Depth","≥2 inches (5 cm) for child 1–8 yr"],
+    ["Pedi Shock Fluids","20 mL/kg bolus IV/IO over 5–10 min, reassess"],
+    ["Epinephrine IM Dose","<30 kg = 0.15 mg IM; ≥30 kg = 0.3 mg IM"],
+    ["Epinephrine IV Dose","0.01 mg/kg IV/IO (0.1 mL of 1:10,000 solution)"],
+    ["Naloxone Dose","0.1 mg/kg IV/IO (min 0.4 mg, max 2 mg)"],
+    ["Atropine Dose","0.02 mg/kg IV/IO (min 0.1 mg)"],
+    ["IO Access","Proximal tibia (<3 yr), proximal humerus (>3 yr)"],
+    ["SIDS Risk","Prone sleeping, soft objects, co-sleeping, overheating"],
+    ["SIDS Prevention","Back sleeping, firm surface, room-sharing (no bed-sharing)"],
+    ["Abuse Red Flag","Injuries inconsistent with age/story, multiple healing stages"],
+    ["Status Epilepticus","Recurrent seizures without recovery between them = EMERGENCY"],
+    ["Commotio Cordis","Sudden cardiac arrest from blunt chest trauma"],
+    ["Button Battery","URGENT removal (chemical burns to esophagus)"],
+    ["Bronchiolitis","Viral, crackles, fast RR, retractions, supportive care"],
+    ["Pneumonia Pedi","Fever, cough, crackles, tachypnea, hypoxia"],
+    ["Asthma Severe","Wheezing, poor air movement, RR >50, SpO₂ <90%"],
+    ["Sepsis","Fever + altered LOC + tachycardia/tachypnea + poor perfusion"],
+    ["Newborn Apnea","High-flow O₂, BVM if no response to stimulation"],
+    ["Nuchal Cord","Gently slip over baby's head if tight"],
+    ["Meconium","Baby born in meconium, unresponsive = stimulate, O₂, BVM"],
+    ["Gastroenteritis","Vomiting/diarrhea, dehydration, usually viral, oral fluids"],
+    ["Appendicitis Pedi","RUQ pain, vomiting, fever, guarding = surgical emergency"],
+];
+
+const scenarios = [
+    {scenario:"4-month-old unresponsive, snoring, no gag reflex, SpO₂ 88%.",answer:"Insert OPA (not NPA in infant), position, oxygen, monitor."},
+    {scenario:"2-year-old with barky cough, mild stridor, RR 28, SpO₂ 96% room air.",answer:"Croup. Cool mist, supportive, don't agitate, transport."},
+    {scenario:"3-year-old severe retractions, weak air entry, RR 50, nasal flaring.",answer:"Respiratory failure risk. High-flow O₂, upright, BVM ready, rapid transport."},
+    {scenario:"18-month-old pale, cold, weak femoral pulse, HR 160, not responding.",answer:"Compensated shock. O₂, supine, IV/IO fluids (ALS), rapid transport."},
+    {scenario:"6-year-old in distress but appears 'calm' and 'tired.'",answer:"Impending failure, not relaxation. Treat urgently: O₂, BVM, transport."},
+    {scenario:"20-month-old fever 39.5°C, generalized seizure 2 min, post-seize normal.",answer:"Febrile seizure. Document time/duration, transport for evaluation."},
+    {scenario:"4-year-old fever, sore throat, drooling, stridor, tripod position.",answer:"Epiglottitis. Keep calm, upright, O₂, DO NOT AGITATE, rapid transport."},
+    {scenario:"2-year-old suddenly choked on peanut, stridor, left-sided decreased BS.",answer:"FBA. O₂, position, NO blind sweep, rapid transport for removal."},
+    {scenario:"8-month-old choking on toy, no cough/cry.",answer:"Back blows (5x) + chest thrusts (5x), repeat."},
+    {scenario:"3-year-old fever, lethargy, petechial rash (non-blanching), shock.",answer:"Meningococcemia. O₂, IV/IO, fluids (ALS), rapid transport ICU."},
+    {scenario:"18-month-old colicky abdominal pain q5–10 min, bloody stool, palpable RUQ mass.",answer:"Intussusception. NPO, gentle, IV fluids (ALS), rapid transport."},
+    {scenario:"2-year-old dry mucous membranes, decreased BP, cap refill 2–3 sec, weak cry.",answer:"Moderate dehydration. IV fluids (ALS), monitor, transport."},
+    {scenario:"3-year-old burned by hot water, ~15% TBSA, anterior torso + arm.",answer:"Cool with water, remove clothes, high-flow O₂, IV fluids (ALS), transport."},
+    {scenario:"6-year-old fell from swing, now vomiting, drowsy, equal pupils.",answer:"Head injury with concerning signs. C-spine, O₂, monitor, transport."},
+    {scenario:"5-year-old 4 seizures in 15 min, post-ictal each time.",answer:"Status epilepticus. O₂, IV access (ALS), rapid transport."},
+    {scenario:"7-year-old known diabetic, confused, trembling, glucose 45 mg/dL, alert.",answer:"Hypoglycemia. Oral glucose if alert/can swallow, monitor, transport."},
+    {scenario:"5-year-old facial swelling, wheezing, hives after peanuts, BP 88/60.",answer:"Anaphylaxis. Epinephrine 0.15 mg IM, O₂, rapid transport."},
+    {scenario:"8-year-old asthmatic, RR 45, 1–2 word dyspnea, SpO₂ 88%.",answer:"Severe asthma. High-flow O₂, upright, BVM ready, transport."},
+    {scenario:"Newborn blue lips/tongue, HR 90, RR 20, calm.",answer:"Possible cardiac issue. O₂, keep warm, rapid transport NICU."},
+    {scenario:"8-week-old found unresponsive in co-sleeping situation.",answer:"SIDS. Resuscitate, transport, note risk factors (prone, co-sleep, soft)."},
+    {scenario:"10-year-old severe abdominal pain, vomiting, rigid abdomen, shock.",answer:"Acute abdomen/peritonitis. NPO, O₂, IV (ALS), surgical transport."},
+    {scenario:"4-year-old hit by car, unresponsive GCS 7, crushed legs, shallow RR.",answer:"Trauma + airway threat. O₂, BVM, C-spine, IV/IO, rapid transport."},
+    {scenario:"3-year-old ingested unknown iron tablets 15 min ago, alert.",answer:"Poison Control + transport. Iron is toxic. Don't delay."},
+    {scenario:"6-month-old RR 60, nasal flare, retractions, wheezing, then RR drops to 40.",answer:"Respiratory failure. BVM NOW, O₂, transport."},
+    {scenario:"5-year-old does CPR. What rate and depth?",answer:"100–120/min compressions, ≥2 inches deep."},
+    {scenario:"2-year-old multiple bruises different healing stages, cigarette burns.",answer:"Document objectively, report abuse (NAT)."},
+    {scenario:"Pregnant woman delivers baby at home, cord around neck, baby blue.",answer:"Slip cord gently over head, dry, stimulate, O₂."},
+    {scenario:"4-year-old pulled from pool, unresponsive, cyanotic, no gag.",answer:"High-flow O₂, BVM, C-spine (mechanism), rapid transport."},
+    {scenario:"1-year-old fever 39°C, lethargy, non-blanching petechiae.",answer:"Meningococcal sepsis. O₂, IV/IO, fluids, urgent transport."},
+    {scenario:"11-year-old hit in chest during soccer, now chest pain + tachycardia.",answer:"Commotio cordis risk. Monitor, O₂, AED ready, transport."},
+    {scenario:"2-year-old seizure 3 min, aspirated stomach contents, post-ictal unresponsive.",answer:"Recovery position, gentle suction, O₂, monitor, transport."},
+    {scenario:"1-year-old swallowed button battery 2 hours ago.",answer:"URGENT hospital (chemical burns). Transport immediately."},
+    {scenario:"7-year-old asthma exacerbation, RR 50, 1–2 word dyspnea, SpO₂ 89%.",answer:"Keep upright, never force flat. High-flow O₂, transport."},
+    {scenario:"3-year-old croup suddenly develops tripod position, drooling worse.",answer:"Possible epiglottitis worsening. Prepare airway emergency."},
+    {scenario:"18-month-old shock, unresponsive, weight 12 kg. IV fails after 3 min.",answer:"Establish IO (proximal tibia), 20 mL/kg bolus."},
+    {scenario:"5-month-old bronchiolitis: RR 65, retractions, crackles, SpO₂ 89%.",answer:"High-flow O₂, upright, transport (albuterol at hospital)."},
+    {scenario:"4-year-old stridor + respiratory distress after inhaling peanut, unilateral BS.",answer:"FBA. O₂, position, DO NOT examine, rapid transport."},
+    {scenario:"6-year-old head injury GCS 14 (confused), equal pupils.",answer:"Head injury concerning. C-spine, O₂, rapid transport."},
+    {scenario:"Newborn meconium-stained, unresponsive, not breathing, HR 80.",answer:"Dry, stimulate, O₂, BVM if no response, transport."},
+    {scenario:"2-year-old had febrile seizure 5 min ago, now post-ictal alert.",answer:"First febrile seizure = transport for workup (rule out meningitis)."},
+    {scenario:"8-year-old wheezing, seesaw breathing, severe distress.",answer:"Respiratory failure. High-flow O₂, BVM ready, transport."},
+    {scenario:"10-month-old in severe shock after fever, petechial rash.",answer:"Fulminant meningococcemia. O₂, IV/IO, fluids, urgent ICU transport."},
+    {scenario:"3-month-old CPR. What technique?",answer:"Two-finger or two-thumb encircling technique."},
+    {scenario:"4-year-old refractory seizures, status epilepticus.",answer:"Benzodiazepine (lorazepam/midazolam) IV/IO/IN (ALS)."},
+    {scenario:"5-year-old epiglottitis losing consciousness, stridor worsening.",answer:"Prepare airway emergency. DO NOT manipulate, suction/BVM ready."},
+    {scenario:"7-month-old in shock, unresponsive, no IV after 3 min.",answer:"Attempt IO (proximal tibia)."},
+    {scenario:"9-year-old severe abdominal pain, green vomiting, distended, no bowel sounds.",answer:"Bowel obstruction. NPO, rapid surgical transport."},
+];
+
+let currentQuestion = 0;
+let correctAnswers = 0;
+let totalAnswers = 0;
+let flashIndex = 0;
+let flashFlipped = false;
+let scenarioIndex = 0;
+
+function renderQuestion() {
+    const q = questions[currentQuestion];
+    document.getElementById("category").innerText = q.category;
+    document.getElementById("question").innerText = q.question;
+    const answersDiv = document.getElementById("answers");
+    answersDiv.innerHTML = "";
+    document.getElementById("explanation").style.display = "none";
+
+    q.answers.forEach((answer, index) => {
+        const btn = document.createElement("div");
+        btn.className = "answer";
+        btn.innerText = answer;
+        btn.onclick = () => checkAnswer(index);
+        answersDiv.appendChild(btn);
+    });
+
+    updateProgress();
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(React.createElement(App));
+function checkAnswer(index) {
+    const q = questions[currentQuestion];
+    const answerElements = document.querySelectorAll(".answer");
+    totalAnswers++;
+    if (index === q.correct) correctAnswers++;
+
+    answerElements.forEach((el, i) => {
+        el.classList.add("disabled");
+        if (i === q.correct) el.classList.add("correct");
+        if (i === index && i !== q.correct) el.classList.add("wrong");
+    });
+
+    updateStats();
+    const exp = document.getElementById("explanation");
+    exp.style.display = "block";
+    exp.innerHTML = `<strong>Explanation:</strong><br>${q.explanation}<div class="memory"><strong>Memory Lock:</strong><br>${q.memory}</div>`;
+    
+    setTimeout(() => {
+        exp.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+}
+
+function nextQuestion() {
+    currentQuestion = (currentQuestion + 1) % questions.length;
+    renderQuestion();
+}
+
+function prevQuestion() {
+    currentQuestion = (currentQuestion - 1 + questions.length) % questions.length;
+    renderQuestion();
+}
+
+function updateStats() {
+    document.getElementById("score").innerText = correctAnswers;
+    document.getElementById("total").innerText = totalAnswers;
+    const percent = totalAnswers === 0 ? 0 : Math.round((correctAnswers / totalAnswers) * 100);
+    document.getElementById("percent").innerText = percent + "%";
+}
+
+function updateProgress() {
+    const progress = ((currentQuestion + 1) / questions.length) * 100;
+    document.getElementById("progressFill").style.width = progress + "%";
+}
+
+function resetStats() {
+    if (confirm("Reset all stats?")) {
+        correctAnswers = 0;
+        totalAnswers = 0;
+        updateStats();
+    }
+}
+
+function shuffleQuestions() {
+    for (let i = questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [questions[i], questions[j]] = [questions[j], questions[i]];
+    }
+    currentQuestion = 0;
+    renderQuestion();
+}
+
+function showSection(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+    if (id === 'flashSection') renderFlashcard();
+    if (id === 'scenarioSection') renderScenario();
+}
+
+function renderFlashcard() {
+    flashFlipped = false;
+    document.getElementById("flashFront").style.display = "block";
+    document.getElementById("flashBack").style.display = "none";
+    document.getElementById("flashFront").innerText = flashcards[flashIndex][0];
+    document.getElementById("flashBack").innerText = flashcards[flashIndex][1];
+    document.getElementById("flashCounter").innerText = `${flashIndex + 1} / ${flashcards.length}`;
+}
+
+function flipFlashcard() {
+    flashFlipped = !flashFlipped;
+    document.getElementById("flashFront").style.display = flashFlipped ? "none" : "block";
+    document.getElementById("flashBack").style.display = flashFlipped ? "block" : "none";
+}
+
+function nextFlashcard() {
+    flashIndex = (flashIndex + 1) % flashcards.length;
+    renderFlashcard();
+}
+
+function prevFlashcard() {
+    flashIndex = (flashIndex - 1 + flashcards.length) % flashcards.length;
+    renderFlashcard();
+}
+
+function shuffleFlashcards() {
+    for (let i = flashcards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [flashcards[i], flashcards[j]] = [flashcards[j], flashcards[i]];
+    }
+    flashIndex = 0;
+    renderFlashcard();
+}
+
+function renderScenario() {
+    document.getElementById("scenarioText").innerHTML = "<strong>Scenario:</strong><br><br>" + scenarios[scenarioIndex].scenario;
+    document.getElementById("scenarioAnswer").innerHTML = "<strong>Key Actions:</strong><br><br>" + scenarios[scenarioIndex].answer;
+}
+
+function nextScenario() {
+    scenarioIndex = (scenarioIndex + 1) % scenarios.length;
+    renderScenario();
+}
+
+function prevScenario() {
+    scenarioIndex = (scenarioIndex - 1 + scenarios.length) % scenarios.length;
+    renderScenario();
+}
+
+renderQuestion();
+renderFlashcard();
+renderScenario();
+updateStats();
 </script>
 </body>
 </html>
